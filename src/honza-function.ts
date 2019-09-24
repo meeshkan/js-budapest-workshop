@@ -7,6 +7,6 @@ export const fetchCoffees =  async () => {
 }
 
 export const getCoffeeType = async (type: string) => {
-  const { data } = await axios("https://www.js-budapest.com/api/coffees/${type}");
+  const { data } = await axios(`https://www.js-budapest.com/api/coffees/${type}`);
   return data;
 }

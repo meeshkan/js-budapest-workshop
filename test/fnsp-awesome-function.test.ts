@@ -1,17 +1,26 @@
 import { divide, fetchAttendees, getIndividualAttendee } from '../src/fnsp-awesome-function';
 import unmock, { u } from 'unmock';
-import { number } from 'json-schema-poet';
-import { Integer } from 'io-ts';
+import { IService } from 'unmock-core/dist/service/interfaces';
 
 unmock
-  .nock('https://www.js-budapest.com/api')
+  .nock('https://www.js-budapest.com/api', 'budapest')
   .get('/attendees')
   .reply(200, { attendees: u.array({ id: u.integer(), name: u.string('name.firstName') }) })
   .get('/attendee/{id}')
   .reply(200, { id: u.integer(), name: u.string('name.firstName') });
 
-beforeAll(() => unmock.on());
+  
+let budapest: IService;
+
+beforeAll(() => {
+ const services =  unmock.on().services;
+ budapest = services.budapest;
+});
+beforeEach(() => {
+  budapest.reset();
+});
 afterAll(() => unmock.off());
+
 
 test('fnsp awesome function in fact divide two numbers', () => {
   expect(divide(6, 2)).toBe(3);
@@ -21,7 +30,11 @@ test('fnsp awesome function in fact divide two numbers', () => {
 test('fnsp get the list of attendees', async () => {
   const attendees = await fetchAttendees();
 
-  expect(attendees instanceof Array).toBe(true);
+  expect(attendees.attendees instanceof Array).toBe(true);
+  expect(attendees).toMatchObject({
+    ...JSON.parse(budapest.spy.getResponseBody()),
+    onInternetExplorer: true,
+  });
 });
 
 test('fnsp get attendee information', async () => {
