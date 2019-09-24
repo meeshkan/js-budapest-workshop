@@ -1,5 +1,6 @@
 import axios from "axios";
 
-export const async = () => {
-    await { test } axios.get("http://its-a-green-world.com/initiatives");
+export async function fetchInitiatives() {
+    const response: any [] = await axios.get("http://its-a-green-world.com/initiatives");
+    return response;
 }
