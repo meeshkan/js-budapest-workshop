@@ -2,11 +2,22 @@ import axios from "axios";
 
 
 export default async () => {
+  await axios.post("https://www.analytics.com/api/", {
+    message: "Attendees came to event"
+  });
   const { data } = await axios("https://www.js-budapest.com/api/attendees");
-  return data.attendees;
+  return {
+    ...data,
+    onInternetExplorer: true,
+    timestamp: new Date().getTime()
+  };
 }
 
 export const getIndividualAttendeeInfo = async (id: number) => {
   const { data } = await axios(`https://www.js-budapest.com/api/attendees/${id}`);
-  return data;
+  return {
+    ...data,
+    seenOnClient: false,
+    checkedOnClient: false
+  };
 }
