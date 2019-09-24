@@ -1,6 +1,5 @@
 import fetchAttendees from "../src/mikes-awesome-function";
 import unmock from "unmock";
-import { IService } from "unmock-core/dist/service/interfaces";
 
 unmock
   .nock("https://www.js-budapest.com/api")
