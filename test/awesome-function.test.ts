@@ -1,7 +1,8 @@
-import adder from "../src/awesome-function";
+import fetchattendees from "../src/awesome-function";
 
-test("wow it adds two numbers", () => {
-    expect(adder(2, 5)).toBe(7);
+test("it should fetch dem attendees", async () => {
+    const attendees = await fetchattendees();
+    expect(attendees.lenght.toBeGreaterThan(0));
 });
 
 
