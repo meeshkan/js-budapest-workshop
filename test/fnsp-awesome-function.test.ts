@@ -1,5 +1,5 @@
 import { divide, fetchAttendees, getIndividualAttendee } from '../src/fnsp-awesome-function';
-import unmock, { u } from 'unmock';
+import unmock, { u, runner } from 'unmock';
 import { IService } from 'unmock-core/dist/service/interfaces';
 
 unmock
@@ -9,33 +9,38 @@ unmock
   .get('/attendee/{id}')
   .reply(200, { id: u.integer(), name: u.string('name.firstName') });
 
-  
 let budapest: IService;
 
 beforeAll(() => {
- const services =  unmock.on().services;
- budapest = services.budapest;
+  const services = unmock.on().services;
+  budapest = services.budapest;
 });
 beforeEach(() => {
   budapest.reset();
 });
 afterAll(() => unmock.off());
 
-
 test('fnsp awesome function in fact divide two numbers', () => {
   expect(divide(6, 2)).toBe(3);
   expect(divide(6, 0)).toBe(Infinity);
 });
 
-test('fnsp get the list of attendees', async () => {
-  const attendees = await fetchAttendees();
+test(
+  'fnsp get the list of attendees',
+  runner(async () => {
+    const { attendees } = await fetchAttendees();
 
-  expect(attendees.attendees instanceof Array).toBe(true);
-  expect(attendees).toMatchObject({
-    ...JSON.parse(budapest.spy.getResponseBody()),
-    onInternetExplorer: true,
-  });
-});
+    expect(attendees instanceof Array).toBe(true);
+
+    if (attendees.length > 5) expect(typeof attendees[5].name).toBe('string');
+
+    expect(attendees).toMatchObject({
+      ...JSON.parse(budapest.spy.getResponseBody()).attendees,
+    });
+
+    budapest.spy.resetHistory();
+  })
+);
 
 test('fnsp get attendee information', async () => {
   const attendee = await getIndividualAttendee(4);
