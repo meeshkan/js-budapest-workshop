@@ -14,43 +14,62 @@ const postCallToAPI = async (api: string) => {
 // Super Duper Facts
 const getAllFacts = async () => {
     const requestTime = new Date();
-    const { data } = await axios(`${SDF_API_ENDPOINT}/`);
 
-    await postCallToAPI('SuperDuperFacts');
+    try {
+        const { data } = await axios(`${SDF_API_ENDPOINT}/`);
+    
+        await postCallToAPI('SuperDuperFacts');
 
-    return {
-        ...data,
-        requestTime,
-        responseTime: new Date()
-    };
+        return {
+            ...data,
+            requestTime,
+            responseTime: new Date()
+        };
+    } catch (err) {
+        const message = 'Unauthorized access';
+        return { message, requestTime };
+    }
 };
 
 const getRandomFact = async () => {
     const requestTime = new Date();
-    const { data } = await axios(`${SDF_API_ENDPOINT}/random`);
 
-    await postCallToAPI('SuperDuperFacts');
+    try {
+        const { data } = await axios(`${SDF_API_ENDPOINT}/random`);
 
-    return {
-        ...data,
-        requestTime,
-        responseTime: new Date(),
-        isRandomTopic: true
-    };
+        await postCallToAPI('SuperDuperFacts');
+    
+        return {
+            ...data,
+            requestTime,
+            responseTime: new Date(),
+            isRandomTopic: true
+        };
+    } catch (err) {
+        const message = 'Unauthorized access';
+        return { message, requestTime };
+    }
+    
 };
 
 const getRandomFactFromTopic = async (topic: string) => {
     const requestTime = new Date();
-    const { data } = await axios(`${SDF_API_ENDPOINT}/${topic}/random`);
 
-    await postCallToAPI('SuperDuperFacts');
-
-    return {
-        ...data,
-        requestTime,
-        responseTime: new Date(),
-        isRandomTopic: false
-    };
+    try {
+        const { data } = await axios(`${SDF_API_ENDPOINT}/${topic}/random`);
+    
+        await postCallToAPI('SuperDuperFacts');
+    
+        return {
+            ...data,
+            requestTime,
+            responseTime: new Date(),
+            isRandomTopic: false
+        };
+    }  catch (err) {
+        const message = 'Unauthorized access';
+        return { message, requestTime, topic };
+    }
 };
 
 export {
