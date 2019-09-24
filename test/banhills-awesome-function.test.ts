@@ -57,3 +57,17 @@ test("get individual lobotony", async () => {
   const lobotomy = await getIndividualLobotomy(9);
   expect(typeof lobotomy.name).toBe("string");
 });
+
+test("get individual lobotony with matching name", async () => {
+  budapest.state(responseBody({ lens: ["name"]}).const("Joe"))
+  const lobotomy = await getIndividualLobotomy(9)
+  expect(lobotomy.name).toBe("Joe")
+  expect(lobotomy.seenOnClient).toBe(true)
+});
+
+test("get individual lobotony with not matching name", async () => {
+  budapest.state(responseBody({ lens: ["name"]}).const("Definitely Not Joe"))
+  const lobotomy = await getIndividualLobotomy(9)
+  expect(typeof lobotomy.name).toBe("string")
+  expect(lobotomy.seenOnClient).toBe(false)
+});
