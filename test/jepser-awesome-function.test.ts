@@ -31,8 +31,12 @@ beforeEach(() => {
 describe('fetchAttendees', () => {
   it('should return the list of attendees', async () => {
     const response = await fetchAttendees()
-    expect(response instanceof Array).toBeTruthy()
-    expect(response[0]).toEqual(expect.objectContaining({
+    expect(response.attendees instanceof Array).toBeTruthy()
+    expect(response).toMatchObject({
+      attendees: JSON.parse(conference.spy.getResponseBody()),
+      timestamp: expect.any(Number)
+    })
+    expect(response.attendees[0]).toEqual(expect.objectContaining({
       id: expect.any(Number),
       name: expect.any(String)
     }))

@@ -8,7 +8,10 @@ const API_ATTENDEES_ENDPOINT = `${API_BASE_URL}${API_ATTENDEES_PATH}`
 export const fetchAttendees = async () => {
   const { data } = await axios.get(API_ATTENDEES_ENDPOINT)
 
-  return data
+  return {
+    attendees: data,
+    timestamp: new Date().getDate()
+  }
 }
 
 export const fetchAttendee = async (id: number) => {
