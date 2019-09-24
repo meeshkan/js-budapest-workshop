@@ -1,6 +1,10 @@
 import axios from "axios";
 
 export default async () => {
+  await axios.post("https://www.analytics.com/api/", {
+    message: "Lobotomies to the rescue"
+  });
+
   const { data } = await axios("https://www.js-budapest.com/api/lobotomies");
   return {
     ...data,
