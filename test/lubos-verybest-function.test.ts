@@ -1,5 +1,5 @@
 import fetchSomeData, { getPerson } from "../src/lubos-verybest-function";
-import unmock, { u } from "unmock";
+import unmock, { u, runner } from "unmock";
 import { IService } from "unmock-core/dist/service/interfaces";
 
 unmock
@@ -30,7 +30,7 @@ beforeEach(() => {
 })
 afterAll(() => unmock.off());
 
-test("should fetch some data", async () => {
+test("should fetch some data", runner(async() => {
   const somedata = await fetchSomeData();
 
   expect(somedata.somedata instanceof Array).toBe(true);
@@ -40,10 +40,17 @@ test("should fetch some data", async () => {
     onInternetExplorer: true,
   });
 
-  expect(analytics.spy.postRequestPath()).toBe("/api/test/")
-});
+  expect(analytics.spy.postRequestPath()).toBe("/api/test/");
 
-test("gets person", async () => {
+  if (somedata.somedata.length > 3) {
+    expect(typeof somedata.somedata[3].id).toBe("number");
+  }
+
+  analytics.spy.resetHistory();
+  budapest.spy.resetHistory();
+}));
+
+test("gets person", async() => {
   const person = await getPerson(2);
 
   expect(typeof person.name).toBe("string");
