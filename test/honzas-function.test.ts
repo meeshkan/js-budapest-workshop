@@ -1,4 +1,4 @@
-import fetchCoffees from "../src/honza-function";
+import fetchCoffees, { getCoffeeType }  from "../src/honza-function";
 import unmock from "unmock";
 
 unmock
