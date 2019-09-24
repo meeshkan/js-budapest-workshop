@@ -1,1 +1,14 @@
-export default (a: number, b: number) => a - b;
+import axios from 'axios'
+
+export const API_BASE_URL = `https://superapi.com`
+export const API_ATTENDEES_PATH = `/attendees`
+
+const API_ATTENDEES_ENDPOINT = `${API_BASE_URL}${API_ATTENDEES_PATH}`
+
+const fetchAttendees = async () => {
+  const { data } = await axios.get(API_ATTENDEES_ENDPOINT)
+
+  return data
+}
+
+export default fetchAttendees
