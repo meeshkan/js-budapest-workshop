@@ -1,5 +1,5 @@
 import fetchAttendees from "../src/mikes-awesome-function";
-import unmock, { u } from "unmock";
+import unmock from "unmock";
 import { IService } from "unmock-core/dist/service/interfaces";
 
 unmock
