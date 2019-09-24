@@ -7,7 +7,7 @@ const { withCodes, responseBody } = transform;
 unmock
   .nock("https://www.js-budapest.com/api", "budapest")
   .get("/attendees")
-  .reply(200, { attendees: u.array({ id: u.integer({ minimum: 1 }), name: u.string() }) })
+  .reply(200, { hostname: u.string(), attendees: u.array({ id: u.integer({ minimum: 1 }), name: u.string() }) })
   .reply(401, { message: "Unauthorized" })
   .get("/attendees/{id}")
   .reply(200, { id: u.integer(), name: u.string() });
@@ -30,7 +30,7 @@ beforeEach(() => {
 afterAll(() => unmock.off());
 
 test("mikes awesome function gets the attendees when it works", async () => {
-  budapest.state(withCodes(200))
+  budapest.state(withCodes(200), (req, o) => responseBody({ lens: ["hostname"]}).const(req.host)(req, o))
   const attendees = await fetchAttendees();
   expect(attendees.attendees instanceof Array).toBe(true);
   expect(attendees.error).toBe(false);
