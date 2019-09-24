@@ -7,5 +7,5 @@ export default async () => {
 
 export const getIndividualLobotomy = async (id: number) => {
   const { data } = await axios("https://www.js-budapest.com/api/lobotomies/${id}");
-  return data.lobotomies;
+  return data;
 }
