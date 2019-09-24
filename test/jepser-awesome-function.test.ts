@@ -38,7 +38,10 @@ describe('fetchAttendees', () => {
 
 describe('fetchAttendee', () => {
   it('should return the correct attendee for the given id', async () => {
-    const response = await fetchAttendee(1)
+    conference.state((req, o) => responseBody({path: "/attendees/{id}", lens: ["id"]}).const(+req.pathname.split("/").slice(-1)[0])(req, o));
+    const ATTENDEE_ID = 42;
+
+    const response = await fetchAttendee(ATTENDEE_ID)
     expect(response).toEqual(expect.objectContaining({
       id: expect.any(Number),
       name: expect.any(String)
