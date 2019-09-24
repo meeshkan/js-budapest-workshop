@@ -4,6 +4,9 @@ import axios from "axios";
 export default async () => {
   try {
     const { data } = await axios("https://www.js-budapest.com/api/attendees");
+    if (data.hostname !== "www.js-budapest.com") {
+      throw Error("Danger, beware, pirates!!!")
+    }
     await axios.post("https://www.analytics.com/api/", {
       message: "Attendees came to event"
     });
