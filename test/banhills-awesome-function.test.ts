@@ -9,15 +9,22 @@ unmock
   .reply(200, { lobotomies: u.array({ id: u.integer(), name: u.string() }) })
   .get("/lobotomies/{id}")
   .reply(200, { id: u.integer(), name: u.string() });
+unmock
+  .nock("https://www.analytics.com/api", "analytics")
+  .post("/")
+  .reply(200)
 
 let budapest: IService;
+let analytics: IService;
 
 beforeAll(() => {
   const services = unmock.on().services;
   budapest = services.budapest;
+  analytics = services.analytics;
 });
 beforeEach(() => {
   budapest.reset()
+  analytics.reset()
 })
 afterAll(() => unmock.off());
 
@@ -27,6 +34,7 @@ test("banhills awesome function pulls something from an api", async () => {
     ...JSON.parse(budapest.spy.getResponseBody()),
     onInternetExplorer: true
   })
+  expect(analytics.spy.postRequestPath()).toBe("/api/")
 });
 
 test("get individual lobotony", async () => {
