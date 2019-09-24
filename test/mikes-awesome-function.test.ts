@@ -1,5 +1,5 @@
 import fetchAttendees, { getIndividualAttendeeInfo } from "../src/mikes-awesome-function";
-import unmock, { u } from "unmock";
+import unmock, { u, runner } from "unmock";
 import { IService } from "unmock-core/dist/service/interfaces";
 
 unmock
@@ -26,7 +26,7 @@ beforeEach(() => {
 })
 afterAll(() => unmock.off());
 
-test("mikes awesome function gets the attendees", async () => {
+test("mikes awesome function gets the attendees", runner(async () => {
   const attendees = await fetchAttendees();
   expect(attendees.attendees instanceof Array).toBe(true);
   expect(attendees).toMatchObject({
@@ -34,7 +34,12 @@ test("mikes awesome function gets the attendees", async () => {
     onInternetExplorer: true,
   });
   expect(analytics.spy.postRequestPath()).toBe("/api/")
-});
+  if (attendees.attendees.length > 5) {
+    expect(typeof attendees.attendees[5].id).toBe("number")
+  }
+  analytics.spy.resetHistory();
+  budapest.spy.resetHistory();
+}));
 
 test("gets individual attendee ok", async () => {
   const attendee = await getIndividualAttendeeInfo(4);
