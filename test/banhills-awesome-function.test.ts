@@ -18,5 +18,5 @@ test("banhills awesome function pulls something from an api", async () => {
 
 test("get individual lobotony", async () => {
   const lobotomies = await getIndividualLobotomy(9);
-  expect(lobotomies.length).toBeGreaterThan(0);
+  expect(lobotomies.length).toEqual(1);
 });
