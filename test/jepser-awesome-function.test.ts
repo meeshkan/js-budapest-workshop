@@ -24,6 +24,9 @@ beforeAll(() => {
   conference = unmock.on().services.conference;
 })
 afterAll(() => unmock.off())
+beforeEach(() => {
+  conference.reset();
+})
 
 describe('fetchAttendees', () => {
   it('should return the list of attendees', async () => {
@@ -38,9 +41,10 @@ describe('fetchAttendees', () => {
 
 describe('fetchAttendee', () => {
   it('should return the correct attendee for the given id', async () => {
+    conference.state((req, o) => responseBody({lens: ["id"]}).const(+req.pathname.split("/").slice(-1)[0])(req, o));
     const response = await fetchAttendee(1)
     expect(response).toEqual(expect.objectContaining({
-      id: expect.any(Number),
+      id: +conference.spy.getRequestPath().split("/").slice(-1)[0],
       name: expect.any(String)
     }))
   })
