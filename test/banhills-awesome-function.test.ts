@@ -1,12 +1,15 @@
 import fetchLobotomies, { getIndividualLobotomy } from "../src/banhills-awesome-function";
-import unmock, { u, runner } from "unmock";
+import unmock, { u, runner, transform } from "unmock";
 import { IService } from "unmock-core/dist/service/interfaces"
 // import * as jsp from "json-schema-poet";
+
+const { withCodes, responseBody } = transform;
 
 unmock
   .nock("https://www.js-budapest.com/api", "budapest")
   .get("/lobotomies")
   .reply(200, { lobotomies: u.array({ id: u.integer(), name: u.string() }) })
+  .reply(401, { message: 'Unauthorized' })
   .get("/lobotomies/{id}")
   .reply(200, { id: u.integer(), name: u.string() });
 unmock
@@ -29,6 +32,8 @@ beforeEach(() => {
 afterAll(() => unmock.off());
 
 test("banhills awesome function pulls something from an api", runner(async () => {
+  budapest.state(withCodes(200))
+
   const lobotomies = await fetchLobotomies();
   expect(lobotomies).toMatchObject({
     ...JSON.parse(budapest.spy.getResponseBody()),
@@ -40,7 +45,29 @@ test("banhills awesome function pulls something from an api", runner(async () =>
   budapest.spy.resetHistory()
 }));
 
+test("banhills awesome function pulls something from an api when fails", async () => {
+  budapest.state(withCodes(401))
+
+  const lobotomies = await fetchLobotomies();
+  expect(lobotomies.lobotomies).toEqual([])
+  expect(lobotomies.error).toBe(true)
+});
+
 test("get individual lobotony", async () => {
   const lobotomy = await getIndividualLobotomy(9);
   expect(typeof lobotomy.name).toBe("string");
+});
+
+test("get individual lobotony with matching name", async () => {
+  budapest.state(responseBody({ lens: ["name"]}).const("Joe"))
+  const lobotomy = await getIndividualLobotomy(9)
+  expect(lobotomy.name).toBe("Joe")
+  expect(lobotomy.seenOnClient).toBe(true)
+});
+
+test("get individual lobotony with not matching name", async () => {
+  budapest.state(responseBody({ lens: ["name"]}).const("Definitely Not Joe"))
+  const lobotomy = await getIndividualLobotomy(9)
+  expect(typeof lobotomy.name).toBe("string")
+  expect(lobotomy.seenOnClient).toBe(false)
 });
