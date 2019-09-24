@@ -1,0 +1,9 @@
+{
+  "name": "js-budapest-workshop",
+  "version": "0.0.0",
+  "description": "Workshop at JS Budapest",
+  "main": "index.js",
+  "repository": "https://github.com/unmock/js-budapest-workshop.git",
+  "author": "Mike Solomon <mike@meeshkan.com>",
+  "license": "MIT"
+}
