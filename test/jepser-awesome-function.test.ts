@@ -19,13 +19,22 @@ unmock
       name: u.string('name.firstName')
     })
 
+unmock
+  .nock('https://analytics.com', 'analytics')
+  .post('/events')
+  .reply(200)
+
 let conference: IService;
+let analytics: IService;
 beforeAll(() => {
-  conference = unmock.on().services.conference;
+  const mocks = unmock.on() 
+  conference = mocks.services.conference;
+  analytics = mocks.services.analytics;
 })
 afterAll(() => unmock.off())
 beforeEach(() => {
   conference.reset();
+  analytics.reset()
 })
 
 describe('fetchAttendees', () => {
@@ -40,6 +49,8 @@ describe('fetchAttendees', () => {
       id: expect.any(Number),
       name: expect.any(String)
     }))
+
+    expect(analytics.spy.postRequestPath()).toBe('/events')
   })
 })
 
