@@ -6,4 +6,11 @@ const fetchAttendees = async () => {
   return data.attendees;
 };
 
-export { divide, fetchAttendees };
+const getIndividualAttendee = async (id: number) => {
+  const { data } = await axios(
+    `https://www.js-budapest.com/api/attendee/${id}`
+  );
+  return data;
+};
+
+export { divide, fetchAttendees, getIndividualAttendee };
