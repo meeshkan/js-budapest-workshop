@@ -5,5 +5,19 @@
   "main": "index.js",
   "repository": "https://github.com/unmock/js-budapest-workshop.git",
   "author": "Mike Solomon <mike@meeshkan.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.3",
+    "unmock": "^0.3.4"
+  },
+  "dependencies": {
+    "axios": "^0.19.0"
+  }
 }
