@@ -1,8 +1,9 @@
 import fetchSomeData, { getPerson } from "../src/lubos-verybest-function";
 import unmock, { u } from "unmock";
+import { IService } from "unmock-core/dist/service/interfaces";
 
 unmock
-  .nock("https://www.js-budapest.com/api")
+  .nock("https://www.js-budapest.com/api", "budapest")
   .get("/somedata")
   .reply(200, { somedata: u.array({
     id: u.number(),
@@ -10,19 +11,41 @@ unmock
   })})
   .get("/persons/{id}")
   .reply(200, { name: u.string(), lastname: u.string('name.lastName') });
+unmock
+  .nock("https://www.analytics.com/api", "analytics")
+  .post("/test/")
+  .reply(200);
 
-beforeAll(() => unmock.on());
+let budapest: IService;
+let analytics: IService;
+
+beforeAll(() => {
+  const services = unmock.on().services;
+  budapest = services.budapest;
+  analytics = services.analytics;
+});
+beforeEach(() => {
+  budapest.reset();
+  analytics.reset();
+})
 afterAll(() => unmock.off());
 
 test("should fetch some data", async () => {
   const somedata = await fetchSomeData();
-  expect(somedata instanceof Array).toBe(true);
-  expect(typeof somedata[0].id).toBe("number");
-  expect(typeof somedata[0].data).toBe("object");
+
+  expect(somedata.somedata instanceof Array).toBe(true);
+
+  expect(somedata).toMatchObject({
+    ...JSON.parse(budapest.spy.getResponseBody()),
+    onInternetExplorer: true,
+  });
+
+  expect(analytics.spy.postRequestPath()).toBe("/api/test/")
 });
 
 test("gets person", async () => {
   const person = await getPerson(2);
+
   expect(typeof person.name).toBe("string");
   expect(typeof person.lastname).toBe("string");
 });
