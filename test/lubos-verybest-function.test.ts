@@ -1,5 +1,15 @@
-import mymagic from "../src/lubos-verybest-function";
+import fetchSomeData from "../src/lubos-verybest-function";
+import unmock from "unmock";
 
-test("my even better function for doing such an amazing math", () => {
-  expect(mymagic(5,2)).toEqual(3);
+unmock
+  .nock("https://www.js-budapest.com/api")
+  .get("/somedata")
+  .reply(200, { somedata: [{ id: 0, data: "Awesome data" }]});
+
+beforeAll(() => unmock.on());
+afterAll(() => unmock.off());
+
+test("should fetch attendees", async () => {
+  const somedata = await fetchSomeData();
+  expect(somedata.length).toBeGreaterThan(0);
 });
