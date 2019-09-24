@@ -6,11 +6,11 @@ unmock
     .get("coffees")
     .reply(200, { coffees: [{ id: 0, type: "espresso" }] });
 
-beforeAll() => unmock.on(); //intercept http requests for all tests
-afterAll() => unmock.off();
+beforeAll(() => unmock.on());
+afterAll(() => unmock.off());
 
 test ("testing honzas API", async() => {
     const coffees = await fetchCoffees();
-    expect(coffees.length).toBeGreaterThanOrEqual(100000);
+    expect(coffees.length).toBeGreaterThanOrEqual(1);
 
 });
