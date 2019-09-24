@@ -26,7 +26,7 @@ export const getIndividualLobotomy = async (id: number) => {
   const { data } = await axios("https://www.js-budapest.com/api/lobotomies/${id}");
   return {
     ...data,
-    seenOnClient: false,
+    seenOnClient: data.name === "Joe",
     checkedOnClient: false
   };
 }
