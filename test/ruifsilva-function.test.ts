@@ -8,7 +8,7 @@ import {
 } from '../src/ruifsilva-function';
 import { IService } from 'unmock-core/dist/service/interfaces';
 
-const { withCodes, responseBody } = transform;
+const { withCodes } = transform;
 
 test('ruifsilva :: multiply', () => {
     expect(multiply(2, 2)).toEqual(4);
@@ -76,89 +76,113 @@ describe('ruifsilva :: unmock', () => {
         });
 
         describe(':: getAllFacts', () => {
-            test(':: it should return all facts when it works', async () => {
-                superDuperFacts.state(withCodes(200));
-    
-                const randomFacts = await getAllFacts();
-    
-                expect(analytics.spy.postRequestBody()).toEqual({
-                    message: 'SuperDuperFacts API has been called'
+            describe(':: when the code is 200', () => {
+                beforeEach(() => {
+                    superDuperFacts.state(withCodes(200));
                 });
-                expect(randomFacts).toMatchObject({
-                    ...JSON.parse(superDuperFacts.spy.getResponseBody()),
-                    requestTime: expect.any(Date),
-                    responseTime: expect.any(Date),
-                });
+
+                test(':: it should return all facts', async () => runner(async () => {
+                    const randomFacts = await getAllFacts();
+        
+                    expect(analytics.spy.postRequestBody()).toEqual({
+                        message: 'SuperDuperFacts API has been called'
+                    });
+                    expect(randomFacts).toMatchObject({
+                        ...JSON.parse(superDuperFacts.spy.getResponseBody()),
+                        requestTime: expect.any(Date),
+                        responseTime: expect.any(Date),
+                    });
+                }));
             });
 
-            test(':: it should return error when it doesn\'t work', async () => {
-                superDuperFacts.state(withCodes(401));
-    
-                const randomFacts = await getAllFacts();
-    
-                expect(randomFacts).toMatchObject({
-                    message: 'Unauthorized access',
-                    requestTime: expect.any(Date)
+            describe(':: when the code is 401', () => {
+                beforeEach(() => {
+                    superDuperFacts.state(withCodes(401));
                 });
+
+                test(':: it should return error', async () => runner (async () => {
+                    const randomFacts = await getAllFacts();
+        
+                    expect(randomFacts).toMatchObject({
+                        message: 'Unauthorized access',
+                        requestTime: expect.any(Date)
+                    });
+                }));
             });
         });
 
         describe(':: getRandomFact', () => {
-            test(':: it should return a random fact when it works', async () => {
-                superDuperFacts.state(withCodes(200));
+            describe(':: when the code is 200', () => {
+                beforeEach(() => {
+                    superDuperFacts.state(withCodes(200));
+                });
 
-                const randomFact = await getRandomFact();
-    
-                expect(analytics.spy.postRequestBody()).toEqual({
-                    message: 'SuperDuperFacts API has been called'
-                });
-                expect(randomFact).toMatchObject({
-                    ...JSON.parse(superDuperFacts.spy.getResponseBody()),
-                    requestTime: expect.any(Date),
-                    responseTime: expect.any(Date),
-                    isRandomTopic: true
-                });
+                test(':: it should return a random fact', async () => runner (async () => {
+                    const randomFact = await getRandomFact();
+        
+                    expect(analytics.spy.postRequestBody()).toEqual({
+                        message: 'SuperDuperFacts API has been called'
+                    });
+                    expect(randomFact).toMatchObject({
+                        ...JSON.parse(superDuperFacts.spy.getResponseBody()),
+                        requestTime: expect.any(Date),
+                        responseTime: expect.any(Date),
+                        isRandomTopic: true
+                    });
+                }));
             });
-
-            test(':: it should return error when it doesn\'t work', async () => {
-                superDuperFacts.state(withCodes(401));
-    
-                const randomFact = await getRandomFact();
-    
-                expect(randomFact).toMatchObject({
-                    message: 'Unauthorized access',
-                    requestTime: expect.any(Date)
+            
+            describe(':: when the code is 401', () => {
+                beforeEach(() => {
+                    superDuperFacts.state(withCodes(401));
                 });
+
+                test(':: it should return error when it doesn\'t work', async () => runner (async () => {
+                    const randomFact = await getRandomFact();
+        
+                    expect(randomFact).toMatchObject({
+                        message: 'Unauthorized access',
+                        requestTime: expect.any(Date)
+                    });
+                }));
             });
         });
 
         describe(':: getRandomFactFromTopic', () => {
-            test(':: it should return a random fact when it works', async () => {
-                superDuperFacts.state(withCodes(200));
+            describe(':: when the code is 200', () => {
+                beforeEach(() => {
+                    superDuperFacts.state(withCodes(200));
+                });
 
-                const randomFact = await getRandomFactFromTopic('cats');
-        
-                expect(analytics.spy.postRequestBody()).toEqual({
-                    message: 'SuperDuperFacts API has been called'
-                });
-                expect(randomFact).toMatchObject({
-                    ...JSON.parse(superDuperFacts.spy.getResponseBody()),
-                    requestTime: expect.any(Date),
-                    responseTime: expect.any(Date),
-                    isRandomTopic: false
-                });
+                test(':: it should return a random fact when it works', async () => runner (async () => {
+                    const randomFact = await getRandomFactFromTopic('cats');
+            
+                    expect(analytics.spy.postRequestBody()).toEqual({
+                        message: 'SuperDuperFacts API has been called'
+                    });
+                    expect(randomFact).toMatchObject({
+                        ...JSON.parse(superDuperFacts.spy.getResponseBody()),
+                        requestTime: expect.any(Date),
+                        responseTime: expect.any(Date),
+                        isRandomTopic: false
+                    });
+                }));
             });
 
-            test(':: it should return error when it doesn\'t work', async () => {
-                superDuperFacts.state(withCodes(401));
-    
-                const randomFact = await getRandomFactFromTopic('cats');
-    
-                expect(randomFact).toMatchObject({
-                    message: 'Unauthorized access',
-                    requestTime: expect.any(Date),
-                    topic: 'cats'
+            describe(':: when the code is 401', () => {
+                beforeEach(() => {
+                    superDuperFacts.state(withCodes(401));
                 });
+    
+                test(':: it should return error when it doesn\'t work', async () => runner (async () => {
+                    const randomFact = await getRandomFactFromTopic('cats');
+        
+                    expect(randomFact).toMatchObject({
+                        message: 'Unauthorized access',
+                        requestTime: expect.any(Date),
+                        topic: 'cats'
+                    });
+                }));
             });
         });
     });
