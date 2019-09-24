@@ -1,5 +1,5 @@
 import fetchCoffees, { getCoffeeType } from "../src/honza-function";
-import unmock, { u } from "unmock";
+import unmock, { u, runner } from "unmock";
 import { IService } from "unmock-core/dist/service/interfaces";
 
 unmock
@@ -30,7 +30,7 @@ beforeEach( () => {
 });
 afterAll(() => unmock.off());
 
-test("coffee count test", async () => {
+test("coffee count test", runner(async () => {
     const coffeeResponse = await fetchCoffees();
     expect(coffeeResponse.coffees instanceof Array).toBe(true);
     expect(coffeeResponse).toMatchObject({
@@ -38,9 +38,15 @@ test("coffee count test", async () => {
         onInternetExplorer: true,
     });
     expect(analytics.spy.postRequestPath()).toBe("/api");
-});
+    if(coffeeResponse.coffees.length > 5) {
+        expect(typeof coffeeResponse.coffees[5].type).toBe("string"); //thanks to runner there are more random values generated, not in all cases there is at least 5 items in this array
+    }
+    analytics.spy.resetHistory();
+    budapest.spy.resetHistory();
+}));
 
 test("coffee type test", async () => {
     const coffees = await getCoffeeType("espresso");
     expect(coffees.rating).toBeGreaterThan(0);
+    expect(typeof coffees.type).toBe("string");
 });
