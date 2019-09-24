@@ -1,4 +1,4 @@
-import unmock from 'unmock';
+import unmock, { u } from 'unmock';
 
 import {
     multiply,
@@ -11,8 +11,6 @@ test('ruifsilva :: multiply', () => {
 });
 
 describe('ruifsilva :: unmock', () => {
-    const topic = 'cats';
-
     beforeAll(() => unmock.on());
     afterAll(() => unmock.off());
 
@@ -20,22 +18,34 @@ describe('ruifsilva :: unmock', () => {
         .nock('https://super-duper-facts.com/api')
         .get('/random')
         .reply(200, {
-            fact: 'JavaScript and Java are, in fact, two different languages.'
+            id: u.integer({ minimum: 0 }),
+            topic: u.string('random.word'),
+            fact: u.string('random.words')
         })
-        .get(`/${topic}/random`)
+        .get('/{topic}/random')
         .reply(200, {
-            fact: 'Cats are not animals, they are small devils masked as pure cuteness.'
+            id: u.integer({ minimum: 0 }),
+            topic: u.string('random.word'),
+            fact: u.string('random.words')
         });
 
     test(':: getRandomFact', async () => {
-        const randomFact = await getRandomFact();
+        const { id, topic, fact } = await getRandomFact();
     
-        expect(randomFact.length).toBeGreaterThan(0);
+        expect(id).toBeGreaterThanOrEqual(0);
+        expect(typeof id).toEqual('number');
+
+        expect(typeof topic).toEqual('string');
+        expect(typeof fact).toEqual('string');
     });
 
     test(':: getRandomFactFromTopic', async () => {
-        const randomFact = await getRandomFactFromTopic(topic);
+        const { id, topic, fact } = await getRandomFactFromTopic('cats');
 
-        expect(randomFact.length).toBeGreaterThan(0);
+        expect(id).toBeGreaterThanOrEqual(0);
+        expect(typeof id).toEqual('number');
+
+        expect(typeof topic).toEqual('string');
+        expect(typeof fact).toEqual('string');
     });
 });
