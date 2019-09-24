@@ -1,5 +1,6 @@
+import { API_ATTENDEES_PATH } from './../src/jepser-awesome-function';
 import fetchAttendees, { getAttendeeByID } from "../src/beawesome-function";
-import unmock, { u } from "unmock";
+import unmock, { u, runner } from "unmock";
 import { IService } from "unmock-core/dist/service/interfaces";
 
 unmock
@@ -30,7 +31,7 @@ beforeEach(() => {
 
 afterAll(() => unmock.off());
 
-test("it should fetch dem attendees", async () => {
+test("it should fetch dem attendees", runner(async () => {
     const attendees = await fetchAttendees();
     expect(attendees.attendees instanceof Array).toBe(true);
     expect(attendees).toMatchObject({
@@ -40,7 +41,13 @@ test("it should fetch dem attendees", async () => {
     expect(analytics.spy.postRequestPath()).toBe("/api/");
     expect(analytics.spy.postRequestBody().message).toEqual("Attendees came to event");
     expect(Object.keys(analytics.spy.postRequestBody())).toEqual(["message"]);
-});
+    if (attendees.attendees.length > 10) {
+        console.log("greater than 10", attendees.attendees.length);
+        expect(typeof attendees.attendees[10].id).toBe("number");
+    }
+    budapest.spy.resetHistory();
+    analytics.spy.resetHistory();
+}));
 
 test("get attendee by id", async () => {
     const attendee = await getAttendeeByID(4);
