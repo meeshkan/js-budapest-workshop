@@ -12,6 +12,10 @@ unmock
     name: u.string()   
   });
 
+unmock
+  .nock("http://my-analytics.com/api", "analytics")
+  .post("/");
+
 let greenWorld: IService;
 
 beforeAll(
