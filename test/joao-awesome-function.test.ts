@@ -1,13 +1,13 @@
 import myFunction from '../src/joao-awesome-function';
-import unmock from 'unmock';
+import unmock, { u } from 'unmock';
 
 unmock
   .nock('https://www.my-api.com/api')
   .get('/attendees/{id}')
   .reply(200, {
     attendees: {
-      id: 0,
-      name: 'Pedro',
+      id: u.integer(),
+      name: u.string('name.firstName'),
     },
   });
 
@@ -16,5 +16,5 @@ afterAll(() => unmock.off());
 
 test('Unmock saved me', async () => {
   const { name } = await myFunction(0);
-  expect(name).toEqual('Pedro');
+  expect(typeof name).toBe('string');
 });

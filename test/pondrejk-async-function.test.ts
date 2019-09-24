@@ -1,17 +1,14 @@
 import { fetchInitiatives, fetchIndividualInitiative } from "../src/pondrejk-async-function";
-import unmock from "unmock";
+import unmock, {u} from "unmock";
 
 unmock
   .nock("http://its-a-green-world.com")
   .get("/initiatives")
-  .reply(200, { initiatives: [{
-    id: "1000",
-    name: "Plant Trees"    
-  }]})
-  .get("/initiatives/1000")
+  .reply(200, { initiatives: u.array({id: u.string(), name: u.string()})})
+  .get("/initiatives/{id}")
   .reply(200, {
-    id: "1000",
-    name: "Plant Trees"   
+    id: u.string(),
+    name: u.string()   
   });
 
 beforeAll(() => unmock.on());
@@ -19,7 +16,7 @@ afterAll(() => unmock.off());
 
 test("testing async function", async () => {
     const initiatives = await fetchInitiatives();
-    expect(initiatives.length).toBeGreaterThan(0);
+    expect(initiatives instanceof Array).toBe(true);
     const initiative1000 = await fetchIndividualInitiative("1000");
-    expect(initiative1000.name).toBe("Plant Trees");
+    expect(typeof initiative1000.name).toBe("string");
 });

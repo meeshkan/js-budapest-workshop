@@ -3,12 +3,16 @@ import unmock, { u } from "unmock";
 
 unmock
     .nock("https://www.js-budapest.com/api")
-    .get("/coffees")
+
     .reply(200, { coffees: u.array(
         { type: u.string(), rating: u.integer({ minimum: 1 }) }
         ) })
     .get("/coffees/{type}")
     .reply(200, { type: u.string(), rating: u.integer({ minimum:1 }) });
+
+    .reply(200, { coffees: [{ type: "espresso", rating: "very good" }] })
+    .get("/coffees/{type}")
+    .reply(200, { type: "espresso", rating: "very good"});
 
 beforeAll(() => unmock.on());
 afterAll(() => unmock.off());
@@ -22,3 +26,4 @@ test("coffee type test", async () => {
     const coffees = await getCoffeeType("espresso");
     expect(coffees.rating).toBeGreaterThan(0);
 });
+
