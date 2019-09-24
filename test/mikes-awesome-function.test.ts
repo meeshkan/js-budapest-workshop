@@ -1,5 +1,15 @@
-import adder from "../src/mikes-awesome-function";
+import fetchAttendees from "../src/mikes-awesome-function";
+import unmock from "unmock";
 
-test("mikes awesome function in fact adds two numbers", () => {
-  expect(adder(2,5)).toBe(7);
+unmock
+  .nock("https://www.js-budapest.com/api")
+  .get("/attendees")
+  .reply(200, { attendees: [{ id: 0, name: "Foo McBar" }]});
+
+beforeAll(() => unmock.on());
+afterAll(() => unmock.off());
+
+test("mikes awesome function in fact adds two numbers", async () => {
+  const attendees = await fetchAttendees();
+  expect(attendees.length).toBeGreaterThan(0);
 });
